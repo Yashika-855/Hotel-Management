@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LuxeStay Hotel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    background:
+    linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+    url("https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    text-align:center;
+    color:white;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px);
+    padding:60px;
+    border-radius:20px;
+    width:500px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+
+h1{
+    font-size:55px;
+    margin-bottom:10px;
+}
+
+h3{
+    color:#f4b400;
+    margin-bottom:15px;
+}
+
+p{
+    font-size:18px;
+    margin-bottom:30px;
+    line-height:1.6;
+}
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+
+.btn{
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.login{
+    background:#f4b400;
+    color:white;
+}
+
+.signup{
+    background:white;
+    color:#333;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+}
+
+.footer{
+    margin-top:25px;
+    font-size:14px;
+    opacity:0.8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h3>WELCOME TO</h3>
+
+<h1>LuxeStay</h1>
+
+<p>
+    Experience luxury, comfort and world-class hospitality.
+    Manage bookings, rooms and guests effortlessly with our
+    Hotel Management System.
+</p>
+
+<div class="buttons">
+
+    <button class="btn login"
+        onclick="location.href='login.html'">
+        Login
+    </button>
+
+    <button class="btn signup"
+        onclick="location.href='signup.html'">
+        Sign Up
+    </button>
+
+</div>
+
+<div class="footer">
+    Your Comfort, Our Priority
+</div>
+```
+
+</div>
+
+</body>
+</html>
