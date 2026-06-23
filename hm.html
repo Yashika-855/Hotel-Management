@@ -49,6 +49,7 @@
     font-size: 1.5rem;
     color: var(--gold);
     letter-spacing: 0.5px;
+    cursor: pointer;
   }
   .logo span { color: var(--white); }
   .nav-links { display: flex; gap: 1.5rem; align-items: center; }
@@ -73,6 +74,12 @@
     transition: background 0.2s;
   }
   .nav-btn:hover { background: var(--gold-dark); color: var(--white); }
+  .nav-btn.ghost {
+    background: transparent;
+    border: 1.5px solid rgba(232,168,56,0.5);
+    color: var(--gold);
+  }
+  .nav-btn.ghost:hover { background: rgba(232,168,56,0.12); color: var(--gold); }
 
   /* HERO */
   .hero {
@@ -120,7 +127,7 @@
     position: relative;
   }
 
-  /* MODE SWITCH (Guest / Reception view) */
+  /* MODE SWITCH (Guest / Reception / Manager view) */
   .mode-switch {
     position: relative;
     display: inline-flex;
@@ -129,6 +136,8 @@
     border-radius: 12px;
     padding: 4px;
     gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .mode-btn {
     padding: 9px 22px;
@@ -142,6 +151,7 @@
     transition: all 0.2s;
   }
   .mode-btn.active { background: var(--gold); color: var(--navy); }
+  .mode-btn.locked { display: inline-flex; align-items: center; gap: 6px; }
 
   /* SECTIONS */
   section { padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; }
@@ -235,7 +245,7 @@
   .book-btn:hover { background: var(--teal); }
   .book-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
 
-  /* ===== RECEPTIONIST DASHBOARD ===== */
+  /* ===== DASHBOARD (shared look for Reception + Manager) ===== */
   .dash-section { background: var(--navy); margin: 0; max-width: 100%; padding: 3.5rem 2rem; }
   .dash-inner { max-width: 1200px; margin: 0 auto; }
   .dash-section .section-title { color: var(--white); }
@@ -249,6 +259,7 @@
     gap: 1rem;
     margin-bottom: 0.5rem;
   }
+  .dash-top-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
   .new-booking-btn {
     background: var(--gold);
@@ -266,6 +277,34 @@
     white-space: nowrap;
   }
   .new-booking-btn:hover { background: var(--gold-dark); color: var(--white); transform: translateY(-1px); }
+
+  .secondary-btn {
+    background: rgba(255,255,255,0.06);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .secondary-btn:hover { background: rgba(255,255,255,0.12); }
+
+  .logout-btn {
+    background: transparent;
+    color: #FCA5A5;
+    border: 1px solid rgba(248,113,113,0.4);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .logout-btn:hover { background: rgba(248,113,113,0.12); }
 
   /* Status counts: Available / Occupied / Reserved / Maintenance */
   .status-counts {
@@ -317,6 +356,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.25rem;
+    margin-bottom: 2rem;
   }
   .checklist-card {
     background: rgba(255,255,255,0.04);
@@ -329,10 +369,17 @@
     border-bottom: 1px solid rgba(255,255,255,0.08);
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
   }
+  .checklist-head .chl-title { display: flex; align-items: center; gap: 8px; }
   .checklist-head h3 { color: var(--white); font-size: 0.92rem; font-weight: 600; }
+  .checklist-count {
+    font-size: 0.7rem; color: #94A3B8; background: rgba(255,255,255,0.06);
+    padding: 2px 9px; border-radius: 20px; font-weight: 600;
+  }
   .checklist-items { padding: 0.4rem 0; max-height: 280px; overflow-y: auto; }
+  .checklist-items.tall { max-height: 420px; }
   .checklist-item {
     display: flex;
     align-items: center;
@@ -346,6 +393,72 @@
   .ci-room { font-size: 0.72rem; color: #64748B; margin-top: 1px; }
   .ci-time { font-size: 0.78rem; color: #94A3B8; font-weight: 500; white-space: nowrap; }
   .checklist-empty { padding: 1.5rem 1.25rem; font-size: 0.82rem; color: #64748B; text-align: center; }
+
+  /* Manager: room management table */
+  .manage-rooms-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .manage-rooms-head {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .manage-rooms-head h3 { color: var(--white); font-size: 0.95rem; font-weight: 600; }
+  .add-room-btn {
+    background: var(--teal);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .add-room-btn:hover { background: #0A6B62; }
+
+  .mgmt-table-wrap { overflow-x: auto; }
+  table.mgmt-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.mgmt-table th {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+    color: #64748B; font-weight: 600; padding: 10px 1.25rem; text-align: left;
+  }
+  table.mgmt-table td {
+    padding: 10px 1.25rem; font-size: 0.85rem; color: #CBD5E1;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  table.mgmt-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .mgmt-actions { display: flex; gap: 6px; }
+  .mgmt-icon-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #CBD5E1;
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .mgmt-icon-btn:hover { background: rgba(255,255,255,0.14); }
+  .mgmt-icon-btn.danger:hover { background: rgba(232,93,58,0.25); color: #FCA5A5; }
+  .mgmt-status-select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #E2E8F0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+  }
 
   /* BOOKING FORM */
   .booking-section { background: linear-gradient(135deg, #F0FDF9 0%, #F5F3FF 100%); margin: 0; max-width: 100%; padding: 4rem 2rem; }
@@ -504,6 +617,44 @@
     border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
   }
 
+  /* LOGIN MODAL */
+  .login-modal h2 { display: flex; align-items: center; gap: 8px; }
+  .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .login-field label { font-size: 0.8rem; font-weight: 600; color: var(--slate); }
+  .login-field input {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-field input:focus { border-color: var(--teal); }
+  .login-error {
+    display: none;
+    background: var(--coral-light);
+    color: #C2410C;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  .login-error.show { display: block; }
+  .login-hint { font-size: 0.72rem; color: var(--muted); margin-top: -8px; margin-bottom: 1rem; }
+
+  /* ADD/EDIT ROOM MODAL */
+  .room-form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .room-form-field label { font-size: 0.8rem; font-weight: 600; color: var(--slate); }
+  .room-form-field input, .room-form-field select {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .room-form-field input:focus, .room-form-field select:focus { border-color: var(--teal); }
+
   /* ===== RECEIPT MODAL — exact V.V.Residency two-column layout ===== */
   .receipt-overlay {
     display: none;
@@ -642,7 +793,7 @@
     .r-dates-row { grid-template-columns: 1fr; text-align: left !important; }
     .r-dates-row > div { text-align: left !important; }
     .checklists { grid-template-columns: 1fr; }
-    nav { padding: 0 1rem; }
+    nav { padding: 0 1rem; flex-wrap: wrap; height: auto; min-height: 64px; }
     .nav-links a:not(:last-child) { display: none; }
   }
 </style>
@@ -651,11 +802,11 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo">Luxe<span>Stay</span></div>
+  <div class="logo" onclick="goHome()">Luxe<span>Stay</span></div>
   <div class="nav-links">
-    <a onclick="scrollTo('rooms')">Rooms</a>
-    <a onclick="scrollTo('booking')">Book Now</a>
-    <button class="nav-btn" onclick="setMode('reception')">Reception View</button>
+    <a id="navRooms" onclick="goToSection('rooms')">Rooms</a>
+    <a id="navBook" onclick="goToSection('booking')">Book Now</a>
+    <button class="nav-btn" onclick="openLoginModal()">Staff Login</button>
   </div>
 </nav>
 
@@ -663,10 +814,11 @@
 <div class="hero">
   <div class="hero-tag">★ 5-Star Luxury Hotel</div>
   <h1>Manage Every Stay with<br><em>Elegance & Precision</em></h1>
-  <p>Switch between the guest booking experience and the reception front-desk view.</p>
+  <p>Switch between the guest booking experience, the reception front-desk view, and the manager dashboard.</p>
   <div class="mode-switch">
     <button class="mode-btn active" id="btnGuest" onclick="setMode('guest')">Guest Booking</button>
     <button class="mode-btn" id="btnReception" onclick="setMode('reception')">Reception Desk</button>
+    <button class="mode-btn locked" id="btnManager" onclick="handleManagerClick()">🔒 Manager Desk</button>
   </div>
 </div>
 
@@ -773,7 +925,7 @@
 
 </div>
 
-<!-- ============ RECEPTION VIEW ============ -->
+<!-- ============ RECEPTION VIEW (unchanged) ============ -->
 <div id="receptionView" class="hidden dash-section">
   <div class="dash-inner">
     <div class="dash-top-row">
@@ -785,14 +937,14 @@
     </div>
 
     <!-- Status counts -->
-    <div class="status-counts" id="statusCounts"></div>
+    <div class="status-counts" id="statusCountsReception"></div>
 
     <!-- Today's revenue -->
     <div class="revenue-card">
       <div>
         <div class="revenue-label">Today's Revenue</div>
-        <div class="revenue-amt" id="todayRevenue">₹0</div>
-        <div class="revenue-chg" id="revenueSub">From confirmed bookings today</div>
+        <div class="revenue-amt" id="todayRevenueReception">₹0</div>
+        <div class="revenue-chg">From confirmed bookings today</div>
       </div>
       <div class="revenue-icon">💰</div>
     </div>
@@ -800,12 +952,81 @@
     <!-- Recent check-ins / check-outs -->
     <div class="checklists">
       <div class="checklist-card">
-        <div class="checklist-head"><span>🛎️</span><h3>Recent Check-ins</h3></div>
-        <div class="checklist-items" id="checkinsList"></div>
+        <div class="checklist-head"><div class="chl-title"><span>🛎️</span><h3>Recent Check-ins</h3></div></div>
+        <div class="checklist-items" id="checkinsListReception"></div>
       </div>
       <div class="checklist-card">
-        <div class="checklist-head"><span>🧳</span><h3>Recent Check-outs</h3></div>
-        <div class="checklist-items" id="checkoutsList"></div>
+        <div class="checklist-head"><div class="chl-title"><span>🧳</span><h3>Recent Check-outs</h3></div></div>
+        <div class="checklist-items" id="checkoutsListReception"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MANAGER VIEW (login-gated) ============ -->
+<div id="managerView" class="hidden dash-section">
+  <div class="dash-inner">
+    <div class="dash-top-row">
+      <div>
+        <div class="section-title">Manager Desk</div>
+        <div class="section-sub">Full room status, revenue, complete check-in/out history & room management</div>
+      </div>
+      <div class="dash-top-actions">
+        <button class="new-booking-btn" onclick="setMode('guest'); scrollToTop();">+ New Booking</button>
+        <button class="logout-btn" onclick="managerLogout()">Log Out</button>
+      </div>
+    </div>
+
+    <!-- Status counts -->
+    <div class="status-counts" id="statusCountsManager"></div>
+
+    <!-- Today's revenue -->
+    <div class="revenue-card">
+      <div>
+        <div class="revenue-label">Today's Revenue</div>
+        <div class="revenue-amt" id="todayRevenueManager">₹0</div>
+        <div class="revenue-chg">From confirmed bookings today</div>
+      </div>
+      <div class="revenue-icon">💰</div>
+    </div>
+
+    <!-- ALL check-ins / check-outs (full history) -->
+    <div class="checklists">
+      <div class="checklist-card">
+        <div class="checklist-head">
+          <div class="chl-title"><span>🛎️</span><h3>All Check-ins</h3></div>
+          <span class="checklist-count" id="checkinCountManager">0</span>
+        </div>
+        <div class="checklist-items tall" id="checkinsListManager"></div>
+      </div>
+      <div class="checklist-card">
+        <div class="checklist-head">
+          <div class="chl-title"><span>🧳</span><h3>All Check-outs</h3></div>
+          <span class="checklist-count" id="checkoutCountManager">0</span>
+        </div>
+        <div class="checklist-items tall" id="checkoutsListManager"></div>
+      </div>
+    </div>
+
+    <!-- Room management -->
+    <div class="manage-rooms-card">
+      <div class="manage-rooms-head">
+        <h3>Manage Rooms</h3>
+        <button class="add-room-btn" onclick="openRoomFormModal()">+ Add Room</button>
+      </div>
+      <div class="mgmt-table-wrap">
+        <table class="mgmt-table">
+          <thead>
+            <tr>
+              <th>Room No.</th>
+              <th>Floor</th>
+              <th>Price / Night</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="manageRoomsTable"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -834,6 +1055,57 @@
   </div>
 </div>
 
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal login-modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h2>🔒 Staff Login</h2>
+    <p>Sign in to access the Manager Desk</p>
+    <div class="login-error" id="loginError">Invalid username or password.</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" onkeydown="if(event.key==='Enter') attemptLogin()">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter') attemptLogin()">
+    </div>
+    <div class="login-hint">Demo credentials: admin / admin123</div>
+    <button class="modal-confirm" onclick="attemptLogin()">Log In</button>
+  </div>
+</div>
+
+<!-- ADD / EDIT ROOM MODAL -->
+<div class="modal-overlay" id="roomFormModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeRoomFormModal()">✕</button>
+    <h2 id="roomFormTitle">Add Room</h2>
+    <p>Enter the room details below</p>
+    <div class="room-form-field">
+      <label>Room No.</label>
+      <input type="text" id="rfRoomNo" placeholder="e.g. 502">
+    </div>
+    <div class="room-form-field">
+      <label>Floor</label>
+      <input type="text" id="rfFloor" placeholder="e.g. 5th Floor">
+    </div>
+    <div class="room-form-field">
+      <label>Price / Night (₹)</label>
+      <input type="number" id="rfPrice" placeholder="e.g. 1800" min="0">
+    </div>
+    <div class="room-form-field">
+      <label>Status</label>
+      <select id="rfStatus">
+        <option value="avail">Available</option>
+        <option value="occupied">Occupied</option>
+        <option value="reserved">Reserved</option>
+        <option value="maint">Maintenance</option>
+      </select>
+    </div>
+    <button class="modal-confirm" onclick="saveRoomForm()">Save Room</button>
+  </div>
+</div>
+
 <!-- RECEIPT MODAL -->
 <div class="receipt-overlay" id="receiptOverlay">
   <div class="receipt-card" id="receiptCard">
@@ -851,7 +1123,7 @@
 <script>
 /* ---------- DATA ---------- */
 /* status: avail | occupied | reserved | maint */
-const rooms = [
+let rooms = [
   { id:'101', floor:'1st Floor', price:1200, status:'avail' },
   { id:'103', floor:'1st Floor', price:1500, status:'occupied' },
   { id:'105', floor:'1st Floor', price:1500, status:'maint' },
@@ -863,15 +1135,18 @@ const rooms = [
   { id:'401', floor:'4th Floor', price:3500, status:'avail' },
 ];
 
-/* Recent activity feeds for reception view */
+/* Full history — Manager sees all of it, Reception sees only the most recent few */
 let checkins = [
   { guest:'Sarah Thompson', room:'205', time:'7:40 PM' },
   { guest:'Marco Rossi', room:'401', time:'3:15 PM' },
   { guest:'Yuki Tanaka', room:'101', time:'1:05 PM' },
+  { guest:'Wei Zhang', room:'312', time:'12:10 PM' },
+  { guest:'Olivia Brown', room:'103', time:'10:45 AM' },
 ];
 let checkouts = [
   { guest:'Emma Williams', room:'118', time:'11:20 AM' },
   { guest:'Raj Patel', room:'209', time:'9:30 AM' },
+  { guest:'Daniel Kim', room:'205', time:'8:05 AM' },
 ];
 
 let todayRevenueAmt = 6900; // running total in INR for today
@@ -887,29 +1162,92 @@ let selectedRoomId = null;
 let selectedRoomPrice = 0;
 let billCounter = 1;
 let aadhaarFile = null; // { name, dataUrl }
+let isManagerLoggedIn = false;
+let editingRoomId = null; // null = adding new room, otherwise editing this room id
+
+const MANAGER_USER = 'admin';
+const MANAGER_PASS = 'admin123';
 
 /* ---------- MODE SWITCH ---------- */
 function setMode(mode) {
   const guestView = document.getElementById('guestView');
   const receptionView = document.getElementById('receptionView');
+  const managerView = document.getElementById('managerView');
   const btnGuest = document.getElementById('btnGuest');
   const btnReception = document.getElementById('btnReception');
+  const btnManager = document.getElementById('btnManager');
+
+  guestView.classList.add('hidden');
+  receptionView.classList.add('hidden');
+  managerView.classList.add('hidden');
+  btnGuest.classList.remove('active');
+  btnReception.classList.remove('active');
+  btnManager.classList.remove('active');
 
   if (mode === 'guest') {
     guestView.classList.remove('hidden');
-    receptionView.classList.add('hidden');
     btnGuest.classList.add('active');
-    btnReception.classList.remove('active');
-  } else {
-    guestView.classList.add('hidden');
+  } else if (mode === 'reception') {
     receptionView.classList.remove('hidden');
-    btnGuest.classList.remove('active');
     btnReception.classList.add('active');
     renderReception();
+  } else if (mode === 'manager') {
+    managerView.classList.remove('hidden');
+    btnManager.classList.add('active');
+    renderManager();
   }
 }
 
+function goHome() { setMode('guest'); scrollToTop(); }
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function handleManagerClick() {
+  if (isManagerLoggedIn) {
+    setMode('manager');
+  } else {
+    openLoginModal();
+  }
+}
+
+/* ---------- NAV LINKS (fixed: always switch to guest view first, then scroll) ---------- */
+function goToSection(id) {
+  setMode('guest');
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }, 60);
+}
+
+/* ---------- LOGIN ---------- */
+function openLoginModal() {
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginModal').classList.add('open');
+  setTimeout(() => document.getElementById('loginUser').focus(), 50);
+}
+function closeLoginModal() { document.getElementById('loginModal').classList.remove('open'); }
+
+function attemptLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (user === MANAGER_USER && pass === MANAGER_PASS) {
+    isManagerLoggedIn = true;
+    closeLoginModal();
+    setMode('manager');
+    scrollToTop();
+    showToast('✅ Welcome back, Manager!');
+  } else {
+    document.getElementById('loginError').classList.add('show');
+  }
+}
+
+function managerLogout() {
+  isManagerLoggedIn = false;
+  setMode('guest');
+  scrollToTop();
+  showToast('👋 Logged out of Manager Desk');
+}
 
 /* ---------- ROOMS (guest view) ---------- */
 function renderRooms(filter='all') {
@@ -977,7 +1315,7 @@ function openModal(id) {
     <div class="modal-row"><span>Status</span><strong style="color:${r.status==='avail'?'#0D9488':'#C2410C'}">${sm.label}</strong></div>
     <div class="modal-row"><span>Cancellation</span><strong>Free until 48hr</strong></div>
   `;
-  const confirmBtn = document.querySelector('.modal-confirm');
+  const confirmBtn = document.querySelector('#modal .modal-confirm');
   confirmBtn.style.display = r.status === 'avail' ? 'block' : 'none';
   document.getElementById('modal').classList.add('open');
 }
@@ -1096,13 +1434,14 @@ function submitBooking() {
     aadhaar: aadhaarFile
   });
 
-  // update room status + reception feeds
+  // update room status + check-in history (this drives both Reception & Manager views)
   if (room) room.status = 'occupied';
   checkins.unshift({ guest: guestName, room: selectedRoomId, time: fmtTime(new Date()) });
-  if (checkins.length > 6) checkins.pop();
   todayRevenueAmt += total;
 
-  renderRooms(document.querySelector('.tab.active')?.textContent === 'All Rooms' ? 'all' : 'all');
+  renderRooms('all');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab')?.classList.add('active');
   renderRoomSelector();
   removeAadhaar();
 }
@@ -1196,13 +1535,11 @@ function closeReceipt() {
   showToast('🎉 Booking confirmed! Receipt saved.');
 }
 
-/* ---------- RECEPTION VIEW RENDER ---------- */
-function renderReception() {
-  // status counts
+/* ---------- SHARED STATUS COUNT RENDER ---------- */
+function getStatusCountsHtml() {
   const counts = { avail:0, occupied:0, reserved:0, maint:0 };
   rooms.forEach(r => counts[r.status]++);
-
-  document.getElementById('statusCounts').innerHTML = Object.keys(counts).map(key => {
+  return Object.keys(counts).map(key => {
     const sm = statusMeta[key];
     return `
       <div class="status-count-card ${sm.dotClass}">
@@ -1213,13 +1550,11 @@ function renderReception() {
         </div>
       </div>`;
   }).join('');
+}
 
-  // today's revenue
-  document.getElementById('todayRevenue').textContent = `₹${todayRevenueAmt.toLocaleString('en-IN')}`;
-
-  // recent check-ins
-  const ciList = document.getElementById('checkinsList');
-  ciList.innerHTML = checkins.length ? checkins.map(c => `
+function checklistItemsHtml(list, emptyMsg) {
+  if (!list.length) return `<div class="checklist-empty">${emptyMsg}</div>`;
+  return list.map(c => `
     <div class="checklist-item">
       <div class="ci-info">
         <div class="ci-name">${c.guest}</div>
@@ -1227,19 +1562,142 @@ function renderReception() {
       </div>
       <div class="ci-time">${c.time}</div>
     </div>
-  `).join('') : `<div class="checklist-empty">No check-ins yet today</div>`;
+  `).join('');
+}
 
-  // recent check-outs
-  const coList = document.getElementById('checkoutsList');
-  coList.innerHTML = checkouts.length ? checkouts.map(c => `
-    <div class="checklist-item">
-      <div class="ci-info">
-        <div class="ci-name">${c.guest}</div>
-        <div class="ci-room">Room ${c.room}</div>
-      </div>
-      <div class="ci-time">${c.time}</div>
-    </div>
-  `).join('') : `<div class="checklist-empty">No check-outs yet today</div>`;
+/* ---------- RECEPTION VIEW RENDER (unchanged behavior: recent few only) ---------- */
+function renderReception() {
+  document.getElementById('statusCountsReception').innerHTML = getStatusCountsHtml();
+  document.getElementById('todayRevenueReception').textContent = `₹${todayRevenueAmt.toLocaleString('en-IN')}`;
+  document.getElementById('checkinsListReception').innerHTML = checklistItemsHtml(checkins.slice(0, 6), 'No check-ins yet today');
+  document.getElementById('checkoutsListReception').innerHTML = checklistItemsHtml(checkouts.slice(0, 6), 'No check-outs yet today');
+}
+
+/* ---------- MANAGER VIEW RENDER (full history + room management) ---------- */
+function renderManager() {
+  document.getElementById('statusCountsManager').innerHTML = getStatusCountsHtml();
+  document.getElementById('todayRevenueManager').textContent = `₹${todayRevenueAmt.toLocaleString('en-IN')}`;
+
+  document.getElementById('checkinCountManager').textContent = checkins.length;
+  document.getElementById('checkoutCountManager').textContent = checkouts.length;
+  document.getElementById('checkinsListManager').innerHTML = checklistItemsHtml(checkins, 'No check-ins recorded');
+  document.getElementById('checkoutsListManager').innerHTML = checklistItemsHtml(checkouts, 'No check-outs recorded');
+
+  renderManageRoomsTable();
+}
+
+function renderManageRoomsTable() {
+  const tbody = document.getElementById('manageRoomsTable');
+  tbody.innerHTML = rooms.map(r => {
+    const sm = statusMeta[r.status];
+    return `
+    <tr>
+      <td style="font-weight:600; color:#fff;">${r.id}</td>
+      <td>${r.floor}</td>
+      <td>₹${r.price.toLocaleString('en-IN')}</td>
+      <td>
+        <select class="mgmt-status-select" onchange="changeRoomStatus('${r.id}', this.value)">
+          <option value="avail" ${r.status==='avail'?'selected':''}>Available</option>
+          <option value="occupied" ${r.status==='occupied'?'selected':''}>Occupied</option>
+          <option value="reserved" ${r.status==='reserved'?'selected':''}>Reserved</option>
+          <option value="maint" ${r.status==='maint'?'selected':''}>Maintenance</option>
+        </select>
+      </td>
+      <td>
+        <div class="mgmt-actions">
+          <button class="mgmt-icon-btn" title="Edit" onclick="openRoomFormModal('${r.id}')">✏️</button>
+          <button class="mgmt-icon-btn danger" title="Delete" onclick="deleteRoom('${r.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function changeRoomStatus(id, newStatus) {
+  const room = rooms.find(r => r.id === id);
+  if (!room) return;
+  room.status = newStatus;
+  renderManager();
+  renderRooms('all');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab')?.classList.add('active');
+  renderRoomSelector();
+  showToast(`✅ Room ${id} marked as ${statusMeta[newStatus].label}`);
+}
+
+/* ---------- ADD / EDIT / DELETE ROOM ---------- */
+function openRoomFormModal(roomId) {
+  editingRoomId = roomId || null;
+  if (roomId) {
+    const r = rooms.find(x => x.id === roomId);
+    document.getElementById('roomFormTitle').textContent = `Edit Room ${r.id}`;
+    document.getElementById('rfRoomNo').value = r.id;
+    document.getElementById('rfFloor').value = r.floor;
+    document.getElementById('rfPrice').value = r.price;
+    document.getElementById('rfStatus').value = r.status;
+  } else {
+    document.getElementById('roomFormTitle').textContent = 'Add Room';
+    document.getElementById('rfRoomNo').value = '';
+    document.getElementById('rfFloor').value = '';
+    document.getElementById('rfPrice').value = '';
+    document.getElementById('rfStatus').value = 'avail';
+  }
+  document.getElementById('roomFormModal').classList.add('open');
+}
+
+function closeRoomFormModal() {
+  document.getElementById('roomFormModal').classList.remove('open');
+  editingRoomId = null;
+}
+
+function saveRoomForm() {
+  const roomNo = document.getElementById('rfRoomNo').value.trim();
+  const floor = document.getElementById('rfFloor').value.trim();
+  const price = parseInt(document.getElementById('rfPrice').value, 10);
+  const status = document.getElementById('rfStatus').value;
+
+  if (!roomNo || !floor || isNaN(price) || price < 0) {
+    showToast('⚠️ Please fill in all fields correctly');
+    return;
+  }
+
+  if (editingRoomId) {
+    // editing existing room — also allow renaming the room number
+    const room = rooms.find(r => r.id === editingRoomId);
+    if (roomNo !== editingRoomId && rooms.some(r => r.id === roomNo)) {
+      showToast('⚠️ Another room with that number already exists');
+      return;
+    }
+    room.id = roomNo;
+    room.floor = floor;
+    room.price = price;
+    room.status = status;
+    showToast(`✅ Room ${roomNo} updated`);
+  } else {
+    if (rooms.some(r => r.id === roomNo)) {
+      showToast('⚠️ A room with that number already exists');
+      return;
+    }
+    rooms.push({ id: roomNo, floor, price, status });
+    showToast(`✅ Room ${roomNo} added`);
+  }
+
+  closeRoomFormModal();
+  renderManager();
+  renderRooms('all');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab')?.classList.add('active');
+  renderRoomSelector();
+}
+
+function deleteRoom(roomId) {
+  rooms = rooms.filter(r => r.id !== roomId);
+  renderManager();
+  renderRooms('all');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab')?.classList.add('active');
+  renderRoomSelector();
+  showToast(`🗑️ Room ${roomId} deleted`);
 }
 
 /* ---------- MISC ---------- */
@@ -1253,12 +1711,9 @@ function showToast(msg) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-function scrollTo(id) {
-  setMode('guest');
-  setTimeout(() => document.getElementById(id).scrollIntoView({ behavior: 'smooth' }), 50);
-}
-
 document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.getElementById('loginModal').addEventListener('click', function(e) { if (e.target === this) closeLoginModal(); });
+document.getElementById('roomFormModal').addEventListener('click', function(e) { if (e.target === this) closeRoomFormModal(); });
 document.getElementById('receiptOverlay').addEventListener('click', function(e) { if (e.target === this) closeReceipt(); });
 
 /* ---------- INIT ---------- */
