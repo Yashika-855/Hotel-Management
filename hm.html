@@ -509,6 +509,11 @@
   .room-opt .ro-no { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); }
   .room-opt .ro-floor { font-size: 0.7rem; color: var(--muted); margin: 2px 0 4px; }
   .room-opt .ro-price { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+  .room-opt .ro-tag {
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--gold-dark); background: var(--gold-light);
+    border-radius: 4px; padding: 1px 6px; display: inline-block; margin-bottom: 4px;
+  }
 
   /* Aadhaar upload */
   .upload-box {
@@ -1256,7 +1261,10 @@ function renderRooms(filter='all') {
 
   grid.innerHTML = filtered.map(r => {
     const sm = statusMeta[r.status];
-    const canBook = r.status === 'avail';
+    // Available rooms can be booked fresh. Reserved rooms can be completed into a booking.
+    // Occupied and Maintenance are genuinely blocked — no guest action possible.
+    const canBook = r.status === 'avail' || r.status === 'reserved';
+    const btnLabel = r.status === 'avail' ? 'Book Now' : r.status === 'reserved' ? 'Complete Booking' : sm.label;
     return `
     <div class="room-card" onclick="openModal('${r.id}')">
       <div class="room-top">
@@ -1270,7 +1278,7 @@ function renderRooms(filter='all') {
         <div class="room-footer">
           <div class="room-price">₹${r.price.toLocaleString('en-IN')}<span>/night</span></div>
           <button class="book-btn" ${canBook ? '' : 'disabled'} onclick="event.stopPropagation(); ${canBook ? `openModal('${r.id}')` : `showToast('⚠️ Room ${r.id} is currently ${sm.label.toLowerCase()}')`}">
-            ${canBook ? 'Book Now' : sm.label}
+            ${btnLabel}
           </button>
         </div>
       </div>
@@ -1280,17 +1288,22 @@ function renderRooms(filter='all') {
 
 function renderRoomSelector() {
   const sel = document.getElementById('roomSelector');
-  const available = rooms.filter(r => r.status === 'avail');
-  sel.innerHTML = available.map((r, i) => `
-    <div class="room-opt ${i === 0 ? 'selected' : ''}" onclick="selectRoom(this,'${r.id}',${r.price})">
+  // Bookable rooms = Available (fresh booking) + Reserved (completing an existing hold)
+  const bookable = rooms.filter(r => r.status === 'avail' || r.status === 'reserved');
+  sel.innerHTML = bookable.map((r, i) => {
+    const sm = statusMeta[r.status];
+    const tagHtml = r.status === 'reserved' ? `<div class="ro-tag">Reserved</div>` : '';
+    return `
+    <div class="room-opt ${i === 0 ? 'selected' : ''}" data-room-id="${r.id}" onclick="selectRoom(this,'${r.id}',${r.price})">
+      ${tagHtml}
       <div class="ro-no">${r.id}</div>
       <div class="ro-floor">${r.floor}</div>
       <div class="ro-price">₹${r.price.toLocaleString('en-IN')}/night</div>
-    </div>
-  `).join('');
-  if (available.length) {
-    selectedRoomId = available[0].id;
-    selectedRoomPrice = available[0].price;
+    </div>`;
+  }).join('');
+  if (bookable.length) {
+    selectedRoomId = bookable[0].id;
+    selectedRoomPrice = bookable[0].price;
   } else {
     selectedRoomId = null;
     selectedRoomPrice = 0;
@@ -1308,15 +1321,22 @@ function openModal(id) {
   const r = rooms.find(x => x.id === id);
   modalRoomId = id;
   const sm = statusMeta[r.status];
+  const statusColor = r.status === 'avail' ? '#0D9488' : r.status === 'reserved' ? '#B87D1C' : '#C2410C';
+  const reservedNote = r.status === 'reserved'
+    ? `<div class="modal-row"><span>Note</span><strong style="color:#B87D1C">Currently held — complete booking to confirm</strong></div>`
+    : '';
   document.getElementById('modalTitle').textContent = `Room ${r.id}`;
   document.getElementById('modalDetails').innerHTML = `
     <div class="modal-row"><span>Floor</span><strong>${r.floor}</strong></div>
     <div class="modal-row"><span>Nightly Rate</span><strong>₹${r.price.toLocaleString('en-IN')}</strong></div>
-    <div class="modal-row"><span>Status</span><strong style="color:${r.status==='avail'?'#0D9488':'#C2410C'}">${sm.label}</strong></div>
+    <div class="modal-row"><span>Status</span><strong style="color:${statusColor}">${sm.label}</strong></div>
     <div class="modal-row"><span>Cancellation</span><strong>Free until 48hr</strong></div>
+    ${reservedNote}
   `;
   const confirmBtn = document.querySelector('#modal .modal-confirm');
-  confirmBtn.style.display = r.status === 'avail' ? 'block' : 'none';
+  const canBook = r.status === 'avail' || r.status === 'reserved';
+  confirmBtn.style.display = canBook ? 'block' : 'none';
+  confirmBtn.textContent = r.status === 'reserved' ? 'Complete Booking' : 'Book This Room';
   document.getElementById('modal').classList.add('open');
 }
 
@@ -1326,8 +1346,9 @@ function bookFromModal() {
   closeModal();
   document.getElementById('booking').scrollIntoView({ behavior:'smooth' });
   setTimeout(() => {
-    const opt = [...document.querySelectorAll('.room-opt')].find(o => o.querySelector('.ro-no').textContent === modalRoomId);
+    const opt = document.querySelector(`.room-opt[data-room-id="${modalRoomId}"]`);
     if (opt) opt.click();
+    else showToast('⚠️ That room is no longer available to book');
   }, 400);
 }
 
