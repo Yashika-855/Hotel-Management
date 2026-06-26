@@ -1047,6 +1047,14 @@ let activeFilter = 'all';
 let selectedRoomPrice = 120;
 let selectedRoomName = 'Standard';
 
+/*
+ * FIX: invoiceLock — while the invoice modal is open, we must not let any
+ * background refresh (loadRooms/loadDashboard) or a forced logout tear the
+ * page out from under the user. The receipt may ONLY be closed by the
+ * "Close" button calling closeInvoiceModal().
+ */
+let invoiceLock = false;
+
 // Generic API Client with Auth injection and Token Refresh
 async function apiCall(endpoint, method = 'GET', body = null, requireAuth = false) {
   const headers = {};
@@ -1078,7 +1086,16 @@ async function apiCall(endpoint, method = 'GET', body = null, requireAuth = fals
         const retryResponse = await fetch(`${BASE_URL}${endpoint}`, options);
         if (retryResponse.ok) return await retryResponse.json();
       }
-      logout();
+      // FIX: never force a hard logout/redirect while the receipt is open —
+      // window.location.href = 'login.html' is a full page navigation and
+      // is the most likely explanation for the invoice "closing itself" a
+      // few seconds after Confirm Reservation (a background refresh call
+      // hitting a 401 right after the modal opened).
+      if (!invoiceLock) {
+        logout();
+      } else {
+        console.warn('Session expired while invoice is open — deferring logout until receipt is closed.');
+      }
       throw new Error('Session expired. Please log in again.');
     }
 
@@ -1228,6 +1245,9 @@ async function handleAddRoom(e) {
 
 // Data loading functions
 async function loadRooms() {
+  // FIX: don't let a background room refresh run (and potentially trigger
+  // a forced logout / DOM churn) while the receipt is on screen.
+  if (invoiceLock) return;
   try {
     rooms = await apiCall('/rooms');
     renderRooms(activeFilter);
@@ -1290,6 +1310,9 @@ async function restoreSession() {
 }
 
 async function loadDashboard() {
+  // FIX: same as loadRooms — never refresh the dashboard out from under an
+  // open receipt.
+  if (invoiceLock) return;
   try {
     const stats = await apiCall('/dashboard/stats');
 
@@ -1504,7 +1527,7 @@ async function submitBooking() {
   today.setHours(0,0,0,0);
   const ciDate = new Date(ci);
   const coDate = new Date(co);
-  
+
   if (ciDate < today) {
     showToast('⚠️ Check-in date cannot be in the past');
     return;
@@ -1520,7 +1543,7 @@ async function submitBooking() {
       showToast('📄 Uploading Aadhaar...');
       const formData = new FormData();
       formData.append('file', aadhaarFile);
-      
+
       const uploadRes = await fetch(`${BASE_URL}/bookings/upload-aadhaar`, {
         method: 'POST',
         body: formData
@@ -1544,7 +1567,7 @@ async function submitBooking() {
 
     const res = await apiCall('/bookings', 'POST', bookingData);
     closeModal();
-    
+
     // Clear form
     document.getElementById('bfFirstName').value = '';
     document.getElementById('bfLastName').value = '';
@@ -1557,11 +1580,19 @@ async function submitBooking() {
     document.getElementById('nightsLabel').textContent = 'Select dates to calculate total';
     document.getElementById('totalPrice').textContent = '—';
 
-    await loadRooms();
-    await loadDashboard();
-
-    // Show Invoice
+    // FIX: show the invoice FIRST and lock it, BEFORE running any background
+    // refreshes. Previously loadRooms()/loadDashboard() ran first via
+    // await, and either of them could hit a 401 and call logout() (a full
+    // page redirect) or otherwise churn the DOM before anything protected
+    // the modal — which is what made the receipt appear to close itself a
+    // few seconds after booking.
     showInvoice(res);
+
+    // Background refreshes now run AFTER the invoice is open and locked.
+    // They will no-op (see invoiceLock checks above) and are safely re-run
+    // the moment the user closes the receipt via closeInvoiceModal().
+    loadRooms();
+    loadDashboard();
 
   } catch (err) {
     showToast(`⚠️ ${err.message}`);
@@ -1598,6 +1629,9 @@ function showInvoice(booking) {
   document.getElementById('invGst2').textContent   = `$${gst.toFixed(2)}`;
   document.getElementById('invTotal').textContent  = `$${total.toFixed(2)}`;
 
+  // FIX: engage the lock the instant the invoice is shown. Nothing but
+  // closeInvoiceModal() (the Close button) may clear it.
+  invoiceLock = true;
   document.getElementById('invoiceModal').classList.add('open');
 }
 
@@ -1607,10 +1641,18 @@ function downloadInvoicePDF() {
   actions.style.display = 'none';
   window.print();
   actions.style.display = 'flex';
+  // NOTE: printing intentionally does NOT close the modal or clear invoiceLock.
 }
 
 function closeInvoiceModal() {
+  // This is the ONLY function permitted to close the receipt and release
+  // the lock. It is wired solely to the "Close" button's onclick.
   document.getElementById('invoiceModal').classList.remove('open');
+  invoiceLock = false;
+  // Now that the receipt is closed, run any refresh that may have been
+  // deferred while the lock was engaged.
+  loadRooms();
+  loadDashboard();
 }
 
 async function updateBookingStatus(bookingId, newStatus) {
@@ -1654,6 +1696,8 @@ function scrollToSection(id) {
 }
 
 // Overlay click closures
+// NOTE: invoiceModal intentionally has NO click-outside-to-close listener.
+// The receipt may only be dismissed via the "Close" button (closeInvoiceModal()).
 document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
